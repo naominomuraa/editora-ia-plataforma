@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Login · Editora IA{% endblock %}
+
+{% block body %}
+<div class="login-bg d-flex align-items-center justify-content-center min-vh-100">
+  <div class="login-card shadow-lg">
+
+    <!-- Logo -->
+    <div class="text-center mb-4">
+      <div class="brand-icon mb-3">
+        <i class="bi bi-book-half"></i>
+      </div>
+      <h1 class="brand-title">Editora IA</h1>
+      <p class="brand-sub">Biblioteca de Ebooks</p>
+    </div>
+
+    <!-- Error -->
+    {% if error %}
+    <div class="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+      <i class="bi bi-exclamation-circle-fill"></i>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Form -->
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="mb-3">
+        <label class="form-label fw-semibold text-muted small">USUÁRIO</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0">
+            <i class="bi bi-person text-muted"></i>
+          </span>
+          <input type="text" name="username" class="form-control border-start-0 ps-0"
+                 placeholder="seu usuário" autofocus required>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="form-label fw-semibold text-muted small">SENHA</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0">
+            <i class="bi bi-lock text-muted"></i>
+          </span>
+          <input type="password" name="password" class="form-control border-start-0 ps-0"
+                 placeholder="••••••••" required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-brand w-100 py-2 fw-semibold">
+        <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
+      </button>
+    </form>
+
+    <p class="text-center text-muted small mt-4 mb-0">
+      Acesso restrito · Apenas usuários autorizados
+    </p>
+  </div>
+</div>
+{% endblock %}
