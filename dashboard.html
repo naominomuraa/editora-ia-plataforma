@@ -1,0 +1,218 @@
+/* ── Variables ── */
+:root {
+  --brand: #6C3483;
+  --brand-dark: #4a2360;
+  --brand-light: #9b59b6;
+  --sidebar-bg: #16213e;
+  --sidebar-w: 240px;
+  --nav-h: 56px;
+}
+
+/* ── Global ── */
+body {
+  background: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ── Login ── */
+.login-bg {
+  background: linear-gradient(135deg, #16213e 0%, #0f3460 50%, #533483 100%);
+}
+
+.login-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.brand-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--brand), var(--brand-light));
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 2rem;
+  color: #fff;
+}
+
+.brand-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  letter-spacing: -0.5px;
+}
+
+.brand-sub {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* ── Buttons ── */
+.btn-brand {
+  background: var(--brand);
+  color: #fff;
+  border: none;
+}
+.btn-brand:hover {
+  background: var(--brand-dark);
+  color: #fff;
+}
+.text-brand { color: var(--brand); }
+
+/* ── Navbar ── */
+.top-nav {
+  background: var(--sidebar-bg);
+  height: var(--nav-h);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: #1a1a2e;
+  height: calc(100vh - var(--nav-h));
+  position: sticky;
+  top: var(--nav-h);
+  overflow-y: auto;
+  border-right: 1px solid rgba(255,255,255,.05);
+}
+
+.sidebar-header {
+  color: rgba(255,255,255,.4);
+  font-size: .7rem;
+  letter-spacing: .08em;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: .55rem 1rem;
+  color: rgba(255,255,255,.65);
+  text-decoration: none;
+  font-size: .875rem;
+  transition: background .15s, color .15s;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-link:hover {
+  background: rgba(255,255,255,.07);
+  color: #fff;
+}
+
+.sidebar-link.active {
+  background: rgba(108,52,131,.25);
+  color: #fff;
+  border-left-color: var(--brand-light);
+}
+
+.sidebar-link .badge {
+  background: rgba(255,255,255,.15);
+  font-size: .7rem;
+  font-weight: 500;
+}
+
+/* ── Category section ── */
+.cat-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* ── Ebook cards ── */
+.ebook-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform .15s, box-shadow .15s;
+}
+
+.ebook-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.12);
+}
+
+.ebook-card-accent {
+  height: 4px;
+  width: 100%;
+}
+
+.ebook-card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.ebook-number {
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  color: #adb5bd;
+}
+
+.ebook-title {
+  font-size: .95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1a1a2e;
+  margin-bottom: .25rem;
+  flex-grow: 1;
+}
+
+.ebook-sub {
+  font-size: .78rem;
+  color: #868e96;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.btn-download {
+  background: color-mix(in srgb, var(--btn-color, #6C3483) 12%, transparent);
+  color: var(--btn-color, #6C3483);
+  border: 1px solid color-mix(in srgb, var(--btn-color, #6C3483) 30%, transparent);
+  font-size: .8rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background .15s, color .15s;
+}
+
+.btn-download:hover {
+  background: var(--btn-color, #6C3483);
+  color: #fff;
+  border-color: var(--btn-color, #6C3483);
+}
+
+/* ── Admin table ── */
+.table th {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #6c757d;
+}
+
+/* ── Scrollbar ── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 4px; }
