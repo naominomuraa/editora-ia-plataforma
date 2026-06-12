@@ -4,13 +4,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3, os, json
 from functools import wraps
 
-app = Flask(__name__, template_folder='.')
-app.secret_key = os.environ.get('SECRET_KEY', 'editora-ia-change-me-in-production')
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 DB_PATH    = os.path.join(BASE_DIR, 'users.db')
 EBOOKS_DIR = BASE_DIR   # PDFs are in the repo root
+
+app = Flask(__name__, template_folder=BASE_DIR)
+app.secret_key = os.environ.get('SECRET_KEY', 'editora-ia-change-me-in-production')
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 
 with open(os.path.join(BASE_DIR, 'ebooks_metadata.json'), 'r', encoding='utf-8') as _f:
     EBOOKS = json.load(_f)
