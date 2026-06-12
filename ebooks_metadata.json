@@ -898,5 +898,166 @@
     "prompt_especializado": "Você é um gestor especializado em clínicas e serviços de saúde. Aborde experiência do paciente, processos internos, indicadores, gestão de agenda, equipe multidisciplinar e crescimento sustentável.\n\nTítulo: A Jornada do Paciente\nSubtítulo: Como transformar atendimento em fidelização\n\nEstrutura obrig",
     "id": 50,
     "filename": "50_A_Jornada_do_Paciente.pdf"
+  },
+  {
+    "id": 51,
+    "titulo": "The Art of War",
+    "subtitulo": "The timeless classic of strategy by Sun Tzu",
+    "categoria": "Livros em Inglês",
+    "filename": "51_The_Art_of_War.pdf"
+  },
+  {
+    "id": 52,
+    "titulo": "As a Man Thinketh",
+    "subtitulo": "The power of thought in achieving success",
+    "categoria": "Livros em Inglês",
+    "filename": "52_As_a_Man_Thinketh.pdf"
+  },
+  {
+    "id": 53,
+    "titulo": "The Science of Getting Rich",
+    "subtitulo": "Scientific principles for attracting prosperity",
+    "categoria": "Livros em Inglês",
+    "filename": "53_The_Science_of_Getting_Rich.pdf"
+  },
+  {
+    "id": 54,
+    "titulo": "The Prince",
+    "subtitulo": "Machiavelli's timeless guide on power and leadership",
+    "categoria": "Livros em Inglês",
+    "filename": "54_The_Prince.pdf"
+  },
+  {
+    "id": 55,
+    "titulo": "Meditations",
+    "subtitulo": "Marcus Aurelius and stoic philosophy for modern leaders",
+    "categoria": "Livros em Inglês",
+    "filename": "55_Meditations.pdf"
+  },
+  {
+    "id": 56,
+    "titulo": "My Life and Work",
+    "subtitulo": "The visionary entrepreneur Henry Ford's autobiography",
+    "categoria": "Livros em Inglês",
+    "filename": "56_My_Life_and_Work.pdf"
+  },
+  {
+    "id": 57,
+    "titulo": "The Way to Wealth",
+    "subtitulo": "Benjamin Franklin's practical financial wisdom",
+    "categoria": "Livros em Inglês",
+    "filename": "57_The_Way_to_Wealth.pdf"
+  },
+  {
+    "id": 58,
+    "titulo": "The Principles of Scientific Management",
+    "subtitulo": "The revolution in productivity and administration",
+    "categoria": "Livros em Inglês",
+    "filename": "58_The_Principles_of_Scientific_Management.pdf"
+  },
+  {
+    "id": 59,
+    "titulo": "Self-Help",
+    "subtitulo": "How character and perseverance build successful careers",
+    "categoria": "Livros em Inglês",
+    "filename": "59_Self-Help.pdf"
+  },
+  {
+    "id": 60,
+    "titulo": "Notes on Nursing",
+    "subtitulo": "Florence Nightingale's pioneering guide to healthcare",
+    "categoria": "Livros em Inglês",
+    "filename": "60_Notes_on_Nursing.pdf"
+  },
+  {
+    "id": 61,
+    "titulo": "The Gospel of Wealth",
+    "subtitulo": "Andrew Carnegie on success, philanthropy and legacy",
+    "categoria": "Livros em Inglês",
+    "filename": "61_The_Gospel_of_Wealth.pdf"
+  },
+  {
+    "id": 62,
+    "titulo": "Acres of Diamonds",
+    "subtitulo": "Discover the extraordinary opportunities around you",
+    "categoria": "Livros em Inglês",
+    "filename": "62_Acres_of_Diamonds.pdf"
+  },
+  {
+    "id": 63,
+    "titulo": "Self-Reliance",
+    "subtitulo": "Ralph Waldo Emerson on independence of thought",
+    "categoria": "Livros em Inglês",
+    "filename": "63_Self-Reliance.pdf"
+  },
+  {
+    "id": 64,
+    "titulo": "Pushing to the Front",
+    "subtitulo": "Orison Swett Marden's principles of success",
+    "categoria": "Livros em Inglês",
+    "filename": "64_Pushing_to_the_Front.pdf"
+  },
+  {
+    "id": 65,
+    "titulo": "Notes on Hospitals",
+    "subtitulo": "Florence Nightingale and modern health management",
+    "categoria": "Livros em Inglês",
+    "filename": "65_Notes_on_Hospitals.pdf"
+  },
+  {
+    "id": 66,
+    "titulo": "Dom Casmurro",
+    "subtitulo": "O clássico de Machado de Assis sobre ambiguidade e ciúme",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "66_Dom_Casmurro.pdf"
+  },
+  {
+    "id": 67,
+    "titulo": "Memorias Postumas de Bras Cubas",
+    "subtitulo": "O romance inovador e revolucionário de Machado de Assis",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "67_Memorias_Postumas_de_Bras_Cubas.pdf"
+  },
+  {
+    "id": 68,
+    "titulo": "O Alienista",
+    "subtitulo": "A obra-prima de Machado de Assis sobre psiquiatria e poder",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "68_O_Alienista.pdf"
+  },
+  {
+    "id": 69,
+    "titulo": "Quincas Borba",
+    "subtitulo": "Machado de Assis e a filosofia do Humanitismo",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "69_Quincas_Borba.pdf"
+  },
+  {
+    "id": 70,
+    "titulo": "Helena",
+    "subtitulo": "Machado de Assis — amor, identidade e sociedade",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "70_Helena.pdf"
+  },
+  {
+    "id": 71,
+    "titulo": "O Cortico",
+    "subtitulo": "Aluísio Azevedo e a dinâmica social do Brasil",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "71_O_Cortico.pdf"
+  },
+  {
+    "id": 72,
+    "titulo": "Iracema",
+    "subtitulo": "José de Alencar e as origens e identidade do Brasil",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "72_Iracema.pdf"
+  },
+  {
+    "id": 73,
+    "titulo": "O Guarani",
+    "subtitulo": "José de Alencar e a formação da identidade brasileira",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "73_O_Guarani.pdf"
   }
 ]
