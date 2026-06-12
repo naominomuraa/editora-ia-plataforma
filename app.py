@@ -2,8 +2,17 @@ from flask import (Flask, render_template_string, request, redirect,
                    url_for, session, send_from_directory, abort)
 from werkzeug.security import generate_password_hash, check_password_hash
 from jinja2 import DictLoader
-import sqlite3, os, json
+import sqlite3, os, json, secrets, smtplib, io
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime, timedelta
 from functools import wraps
+
+try:
+    import openpyxl
+    HAS_OPENPYXL = True
+except ImportError:
+    HAS_OPENPYXL = False
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
@@ -38,6 +47,64 @@ CAT_COLORS = {
     'Varejo':                 '#E91E63',
     'Saúde e Gestão':         '#16A085',
 }
+
+# ── Email config ───────────────────────────────────────────────────────────────
+MAIL_USER = os.environ.get('MAIL_USERNAME', '')
+MAIL_PASS = os.environ.get('MAIL_PASSWORD', '')
+
+def _send_email(to_addr, subject, html):
+    """Send via Gmail SMTP. Returns True on success."""
+    if not (MAIL_USER and MAIL_PASS and to_addr):
+        return False
+    try:
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From']    = f'Clube do Saber <{MAIL_USER}>'
+        msg['To']      = to_addr
+        msg.attach(MIMEText(html, 'html', 'utf-8'))
+        with smtplib.SMTP('smtp.gmail.com', 587) as s:
+            s.starttls()
+            s.login(MAIL_USER, MAIL_PASS)
+            s.send_message(msg)
+        return True
+    except Exception as ex:
+        print(f'[mail] {ex}')
+        return False
+
+def _welcome_html(username, password, login_url):
+    return f'''<div style="font-family:Arial,sans-serif;max-width:500px;margin:auto">
+  <div style="background:linear-gradient(135deg,#16213e,#533483);padding:28px 32px;border-radius:12px 12px 0 0;text-align:center">
+    <h1 style="color:#fff;margin:0;font-size:1.4rem">&#128218; Clube do Saber</h1>
+    <p style="color:rgba(255,255,255,.7);margin:6px 0 0;font-size:.9rem">Biblioteca de Ebooks Profissionais</p>
+  </div>
+  <div style="background:#fff;padding:28px 32px;border-radius:0 0 12px 12px;border:1px solid #eee;border-top:none">
+    <h2 style="color:#1a1a2e;margin-top:0">Bem-vindo(a)! &#127881;</h2>
+    <p style="color:#555;line-height:1.6">Seu acesso ao <strong>Clube do Saber</strong> foi criado. Guarde seus dados:</p>
+    <div style="background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:16px;margin:16px 0">
+      <p style="margin:4px 0;color:#555;font-size:.9rem"><strong>Usu&#225;rio:</strong> {username}</p>
+      <p style="margin:4px 0;color:#555;font-size:.9rem"><strong>Senha:</strong> {password}</p>
+    </div>
+    <a href="{login_url}" style="display:block;background:#6C3483;color:#fff;text-align:center;padding:13px;border-radius:8px;text-decoration:none;font-weight:700">
+      &#128273; Acessar a Plataforma
+    </a>
+    <p style="color:#bbb;font-size:.75rem;margin:20px 0 0;text-align:center">N&#227;o compartilhe suas credenciais</p>
+  </div>
+</div>'''
+
+def _reset_html(reset_url):
+    return f'''<div style="font-family:Arial,sans-serif;max-width:500px;margin:auto">
+  <div style="background:linear-gradient(135deg,#16213e,#533483);padding:28px 32px;border-radius:12px 12px 0 0;text-align:center">
+    <h1 style="color:#fff;margin:0;font-size:1.4rem">&#128218; Clube do Saber</h1>
+  </div>
+  <div style="background:#fff;padding:28px 32px;border-radius:0 0 12px 12px;border:1px solid #eee;border-top:none">
+    <h2 style="color:#1a1a2e;margin-top:0">&#128273; Redefinir Senha</h2>
+    <p style="color:#555;line-height:1.6">Clique no bot&#227;o abaixo para criar uma nova senha. O link &#233; v&#225;lido por <strong>1 hora</strong>.</p>
+    <a href="{reset_url}" style="display:block;background:#6C3483;color:#fff;text-align:center;padding:13px;border-radius:8px;text-decoration:none;font-weight:700;margin:20px 0">
+      Redefinir Minha Senha
+    </a>
+    <p style="color:#bbb;font-size:.75rem;margin:0;text-align:center">Se n&#227;o solicitou, ignore este e-mail.</p>
+  </div>
+</div>'''
 
 # ── Embedded templates ────────────────────────────────────────────────────────
 CSS = """
@@ -75,7 +142,7 @@ BASE_TMPL = """<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{% block title %}Editora IA{% endblock %}</title>
+  <title>{% block title %}Clube do Saber{% endblock %}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <style>""" + CSS + """</style>
@@ -87,18 +154,23 @@ BASE_TMPL = """<!DOCTYPE html>
 </body></html>"""
 
 LOGIN_TMPL = """{% extends 'base' %}
-{% block title %}Login · Editora IA{% endblock %}
+{% block title %}Login · Clube do Saber{% endblock %}
 {% block body %}
 <div class="login-bg d-flex align-items-center justify-content-center min-vh-100">
   <div class="login-card shadow-lg">
     <div class="text-center mb-4">
       <div class="brand-icon mb-3"><i class="bi bi-book-half"></i></div>
-      <h1 class="brand-title">Editora IA</h1>
-      <p class="brand-sub">Biblioteca de Ebooks</p>
+      <h1 class="brand-title">Clube do Saber</h1>
+      <p class="brand-sub">Biblioteca de Ebooks Profissionais</p>
     </div>
     {% if error %}
     <div class="alert alert-danger d-flex align-items-center gap-2 py-2">
       <i class="bi bi-exclamation-circle-fill"></i><span>{{ error }}</span>
+    </div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success d-flex align-items-center gap-2 py-2">
+      <i class="bi bi-check-circle-fill"></i><span>{{ success }}</span>
     </div>
     {% endif %}
     <form method="POST">
@@ -109,12 +181,15 @@ LOGIN_TMPL = """{% extends 'base' %}
           <input type="text" name="username" class="form-control border-start-0 ps-0" placeholder="seu usuário" autofocus required>
         </div>
       </div>
-      <div class="mb-4">
+      <div class="mb-2">
         <label class="form-label fw-semibold text-muted small">SENHA</label>
         <div class="input-group">
           <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock text-muted"></i></span>
           <input type="password" name="password" class="form-control border-start-0 ps-0" placeholder="••••••••" required>
         </div>
+      </div>
+      <div class="text-end mb-4">
+        <a href="/forgot" class="text-muted small" style="font-size:.8rem">Esqueci minha senha</a>
       </div>
       <button type="submit" class="btn btn-brand w-100 py-2 fw-semibold">
         <i class="bi bi-box-arrow-in-right me-2"></i>Entrar
@@ -125,16 +200,114 @@ LOGIN_TMPL = """{% extends 'base' %}
 </div>
 {% endblock %}"""
 
+FORGOT_TMPL = """{% extends 'base' %}
+{% block title %}Esqueci minha senha · Clube do Saber{% endblock %}
+{% block body %}
+<div class="login-bg d-flex align-items-center justify-content-center min-vh-100">
+  <div class="login-card shadow-lg">
+    <div class="text-center mb-4">
+      <div class="brand-icon mb-3"><i class="bi bi-key"></i></div>
+      <h1 class="brand-title" style="font-size:1.3rem">Esqueci minha senha</h1>
+      <p class="brand-sub">Informe seu e-mail para receber o link de redefinição</p>
+    </div>
+    {% if no_email %}
+    <div class="alert alert-info d-flex align-items-center gap-2 py-2">
+      <i class="bi bi-info-circle-fill"></i>
+      <span>Redefinição por e-mail não está ativa. Entre em contato com o administrador.</span>
+    </div>
+    {% elif sent %}
+    <div class="alert alert-success d-flex align-items-center gap-2 py-2">
+      <i class="bi bi-envelope-check-fill"></i>
+      <span>Se esse e-mail estiver cadastrado, você receberá o link em breve.</span>
+    </div>
+    {% else %}
+    {% if error %}
+    <div class="alert alert-danger d-flex align-items-center gap-2 py-2">
+      <i class="bi bi-exclamation-circle-fill"></i><span>{{ error }}</span>
+    </div>
+    {% endif %}
+    <form method="POST">
+      <div class="mb-4">
+        <label class="form-label fw-semibold text-muted small">E-MAIL</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+          <input type="email" name="email" class="form-control border-start-0 ps-0" placeholder="seu@email.com" autofocus required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-brand w-100 py-2 fw-semibold">
+        <i class="bi bi-send me-2"></i>Enviar Link
+      </button>
+    </form>
+    {% endif %}
+    <div class="text-center mt-4">
+      <a href="/login" class="text-muted small"><i class="bi bi-arrow-left me-1"></i>Voltar ao login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}"""
+
+RESET_TMPL = """{% extends 'base' %}
+{% block title %}Nova senha · Clube do Saber{% endblock %}
+{% block body %}
+<div class="login-bg d-flex align-items-center justify-content-center min-vh-100">
+  <div class="login-card shadow-lg">
+    <div class="text-center mb-4">
+      <div class="brand-icon mb-3"><i class="bi bi-shield-lock"></i></div>
+      <h1 class="brand-title" style="font-size:1.3rem">Nova Senha</h1>
+      <p class="brand-sub">Clube do Saber</p>
+    </div>
+    {% if invalid %}
+    <div class="alert alert-warning d-flex align-items-center gap-2 py-2">
+      <i class="bi bi-clock-history"></i>
+      <span>Este link expirou ou é inválido. <a href="/forgot">Solicite um novo.</a></span>
+    </div>
+    {% elif done %}
+    <div class="alert alert-success d-flex align-items-center gap-2 py-2">
+      <i class="bi bi-check-circle-fill"></i><span>Senha alterada com sucesso!</span>
+    </div>
+    <a href="/login" class="btn btn-brand w-100 py-2 fw-semibold mt-2">
+      <i class="bi bi-box-arrow-in-right me-2"></i>Ir para Login
+    </a>
+    {% else %}
+    {% if error %}
+    <div class="alert alert-danger d-flex align-items-center gap-2 py-2">
+      <i class="bi bi-exclamation-circle-fill"></i><span>{{ error }}</span>
+    </div>
+    {% endif %}
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label fw-semibold text-muted small">NOVA SENHA</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock text-muted"></i></span>
+          <input type="password" name="password" class="form-control border-start-0 ps-0" placeholder="••••••••" autofocus required minlength="6">
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="form-label fw-semibold text-muted small">CONFIRMAR SENHA</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-lock-fill text-muted"></i></span>
+          <input type="password" name="password2" class="form-control border-start-0 ps-0" placeholder="••••••••" required minlength="6">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-brand w-100 py-2 fw-semibold">
+        <i class="bi bi-check-lg me-2"></i>Salvar Nova Senha
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}"""
+
 DASHBOARD_TMPL = """{% extends 'base' %}
-{% block title %}Biblioteca · Editora IA{% endblock %}
+{% block title %}Biblioteca · Clube do Saber{% endblock %}
 {% block body %}
 <nav class="navbar navbar-dark top-nav px-4">
   <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard">
-    <i class="bi bi-book-half fs-5"></i><span class="fw-bold">Editora IA</span>
+    <i class="bi bi-book-half fs-5"></i><span class="fw-bold">Clube do Saber</span>
   </a>
   <div class="d-flex align-items-center gap-3">
     <span class="text-white-50 small d-none d-sm-inline"><i class="bi bi-book me-1"></i>{{ total }} ebooks</span>
-    <a href="/download/Editora_IA_50_Ebooks.zip" class="btn btn-sm btn-outline-light">
+    <a href="/download/Clube_do_Saber_50_Ebooks.zip" class="btn btn-sm btn-outline-light">
       <i class="bi bi-download me-1"></i>Baixar Todos
     </a>
     {% if is_adm %}
@@ -210,26 +383,83 @@ function filterCat(e,n){e.preventDefault();document.querySelectorAll('.sidebar-l
 {% endblock %}"""
 
 ADMIN_TMPL = """{% extends 'base' %}
-{% block title %}Admin · Editora IA{% endblock %}
+{% block title %}Admin · Clube do Saber{% endblock %}
 {% block body %}
 <nav class="navbar navbar-dark top-nav px-4">
   <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard">
-    <i class="bi bi-book-half fs-5"></i><span class="fw-bold">Editora IA</span>
+    <i class="bi bi-book-half fs-5"></i><span class="fw-bold">Clube do Saber</span>
     <span class="badge bg-warning text-dark ms-1 small">Admin</span>
   </a>
-  <div class="d-flex gap-2">
+  <div class="d-flex align-items-center gap-2">
+    {% if mail_ok %}
+    <span class="badge bg-success text-white"><i class="bi bi-envelope-check me-1"></i>E-mail ativo</span>
+    {% else %}
+    <span class="badge bg-secondary text-white" title="Configure MAIL_USERNAME e MAIL_PASSWORD no Render"><i class="bi bi-envelope-x me-1"></i>E-mail inativo</span>
+    {% endif %}
     <a href="/dashboard" class="btn btn-sm btn-outline-light"><i class="bi bi-grid me-1"></i>Biblioteca</a>
     <a href="/logout" class="btn btn-sm btn-dark"><i class="bi bi-box-arrow-right me-1"></i>Sair</a>
   </div>
 </nav>
 <div class="container-fluid py-4 px-4" style="max-width:960px">
-  {% set msgs = {'added':('success','bi-check-circle-fill','Usuário criado.'),'exists':('danger','bi-exclamation-circle-fill','Usuário já existe.'),'deleted':('info','bi-trash-fill','Usuário removido.'),'self':('warning','bi-shield-exclamation','Não pode remover a própria conta.'),'empty':('danger','bi-exclamation-circle-fill','Usuário e senha obrigatórios.'),'pwd_ok':('success','bi-key-fill','Senha alterada.'),'empty_pass':('danger','bi-exclamation-circle-fill','Nova senha vazia.')} %}
-  {% if msg and msg in msgs %}{% set tp,ic,tx = msgs[msg] %}
-  <div class="alert alert-{{ tp }} d-flex align-items-center gap-2 alert-dismissible">
-    <i class="bi {{ ic }}"></i><span>{{ tx }}</span>
+
+  <!-- Alerts -->
+  {% if msg == 'added' %}
+  <div class="alert alert-success d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-check-circle-fill"></i>
+    <span>Usuário criado com sucesso{% if emailed == '1' %} · E-mail de boas-vindas enviado ✉️{% endif %}.</span>
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-  </div>{% endif %}
+  </div>
+  {% elif msg == 'imported' %}
+  <div class="alert alert-success d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-check-circle-fill"></i>
+    <span><strong>{{ created }}</strong> usuário(s) importado(s){% if skipped != '0' %}, <strong>{{ skipped }}</strong> já existia(m){% endif %}{% if emailed != '0' %}, <strong>{{ emailed }}</strong> e-mail(s) enviado(s) ✉️{% endif %}.</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% elif msg == 'import_err' %}
+  <div class="alert alert-danger d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-exclamation-circle-fill"></i><span>Erro ao ler o arquivo. Verifique se é um .xlsx válido.</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% elif msg == 'no_xlsx' %}
+  <div class="alert alert-warning d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-exclamation-triangle-fill"></i><span>Biblioteca openpyxl não instalada. Adicione ao requirements.txt.</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% elif msg == 'exists' %}
+  <div class="alert alert-danger d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-exclamation-circle-fill"></i><span>Usuário já existe.</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% elif msg == 'deleted' %}
+  <div class="alert alert-info d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-trash-fill"></i><span>Usuário removido.</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% elif msg == 'self' %}
+  <div class="alert alert-warning d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-shield-exclamation"></i><span>Não pode remover a própria conta.</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% elif msg == 'empty' %}
+  <div class="alert alert-danger d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-exclamation-circle-fill"></i><span>Usuário e senha são obrigatórios.</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% elif msg == 'pwd_ok' %}
+  <div class="alert alert-success d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-key-fill"></i><span>Senha alterada com sucesso.</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% elif msg == 'empty_pass' %}
+  <div class="alert alert-danger d-flex align-items-center gap-2 alert-dismissible">
+    <i class="bi bi-exclamation-circle-fill"></i><span>A nova senha não pode ser vazia.</span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endif %}
+
   <h1 class="h4 fw-bold mb-4"><i class="bi bi-shield-fill me-2 text-warning"></i>Gerenciar Usuários</h1>
+
+  <!-- Adicionar usuário -->
   <div class="card shadow-sm mb-4">
     <div class="card-header fw-semibold"><i class="bi bi-person-plus-fill me-2 text-brand"></i>Adicionar Usuário</div>
     <div class="card-body">
@@ -237,16 +467,41 @@ ADMIN_TMPL = """{% extends 'base' %}
         <div class="row g-3">
           <div class="col-md-3"><label class="form-label small fw-semibold text-muted">USUÁRIO *</label><input type="text" name="username" class="form-control" placeholder="nome_usuario" required></div>
           <div class="col-md-3"><label class="form-label small fw-semibold text-muted">SENHA *</label><input type="password" name="password" class="form-control" placeholder="••••••••" required></div>
-          <div class="col-md-3"><label class="form-label small fw-semibold text-muted">E-MAIL</label><input type="email" name="email" class="form-control" placeholder="email@ex.com"></div>
+          <div class="col-md-3"><label class="form-label small fw-semibold text-muted">E-MAIL {% if mail_ok %}<span class="text-success small">(enviará boas-vindas)</span>{% endif %}</label><input type="email" name="email" class="form-control" placeholder="email@ex.com"></div>
           <div class="col-md-2 d-flex align-items-end"><div class="form-check mb-2"><input type="checkbox" name="is_admin" id="is_admin" class="form-check-input"><label for="is_admin" class="form-check-label small">Admin</label></div></div>
           <div class="col-md-1 d-flex align-items-end"><button type="submit" class="btn btn-brand w-100"><i class="bi bi-plus-lg"></i></button></div>
         </div>
       </form>
     </div>
   </div>
+
+  <!-- Importar Excel -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header fw-semibold"><i class="bi bi-file-earmark-excel-fill me-2 text-success"></i>Importar por Planilha Excel</div>
+    <div class="card-body">
+      <p class="text-muted small mb-3">
+        Faça upload de um arquivo <strong>.xlsx</strong> com as colunas: <code>usuario</code>, <code>senha</code>, <code>email</code> (opcional).<br>
+        A primeira linha deve ter os cabeçalhos. Os dados começam na segunda linha.
+      </p>
+      <form method="POST" action="/admin/import" enctype="multipart/form-data">
+        <div class="row g-3 align-items-end">
+          <div class="col"><input type="file" name="file" class="form-control" accept=".xlsx" required></div>
+          <div class="col-auto"><button type="submit" class="btn btn-success"><i class="bi bi-upload me-1"></i>Importar</button></div>
+        </div>
+        {% if mail_ok %}
+        <div class="form-check mt-2">
+          <input type="checkbox" name="send_email" id="send_email_import" class="form-check-input" checked>
+          <label for="send_email_import" class="form-check-label small text-muted">Enviar e-mail de boas-vindas para cada usuário com e-mail cadastrado</label>
+        </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <!-- Tabela de usuários -->
   <div class="card shadow-sm">
     <div class="card-header fw-semibold d-flex justify-content-between align-items-center">
-      <span><i class="bi bi-people-fill me-2 text-brand"></i>Usuários</span>
+      <span><i class="bi bi-people-fill me-2 text-brand"></i>Usuários Cadastrados</span>
       <span class="badge bg-secondary">{{ users|length }}</span>
     </div>
     <div class="table-responsive">
@@ -282,11 +537,18 @@ ADMIN_TMPL = """{% extends 'base' %}
 {% endblock %}"""
 
 # ── Flask app ─────────────────────────────────────────────────────────────────
-TMPLS = {'base': BASE_TMPL, 'login': LOGIN_TMPL, 'dashboard': DASHBOARD_TMPL, 'admin': ADMIN_TMPL}
+TMPLS = {
+    'base':      BASE_TMPL,
+    'login':     LOGIN_TMPL,
+    'forgot':    FORGOT_TMPL,
+    'reset':     RESET_TMPL,
+    'dashboard': DASHBOARD_TMPL,
+    'admin':     ADMIN_TMPL,
+}
 
 app = Flask(__name__)
 app.jinja_loader = DictLoader(TMPLS)
-app.secret_key = os.environ.get('SECRET_KEY', 'editora-ia-change-me-in-production')
+app.secret_key = os.environ.get('SECRET_KEY', 'clube-saber-change-me-in-production')
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 
 # ── DB helpers ────────────────────────────────────────────────────────────────
@@ -305,6 +567,13 @@ def init_db():
         is_admin INTEGER DEFAULT 0,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )""")
+    db.execute("""CREATE TABLE IF NOT EXISTS reset_tokens (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        token TEXT UNIQUE NOT NULL,
+        expires_at TEXT NOT NULL,
+        used INTEGER DEFAULT 0
+    )""")
     n = db.execute('SELECT COUNT(*) FROM users').fetchone()[0]
     if n == 0:
         u = os.environ.get('ADMIN_USERNAME', 'admin')
@@ -317,7 +586,6 @@ def init_db():
 
 # ── Decorators ────────────────────────────────────────────────────────────────
 def login_required(f):
-    from functools import wraps
     @wraps(f)
     def w(*a, **kw):
         if 'uid' not in session: return redirect('/login')
@@ -325,7 +593,6 @@ def login_required(f):
     return w
 
 def admin_required(f):
-    from functools import wraps
     @wraps(f)
     def w(*a, **kw):
         if 'uid' not in session: return redirect('/login')
@@ -345,6 +612,7 @@ def index():
 def login():
     if 'uid' in session: return redirect('/dashboard')
     error = None
+    success = request.args.get('success')
     if request.method == 'POST':
         u = request.form.get('username', '').strip()
         p = request.form.get('password', '')
@@ -358,7 +626,7 @@ def login():
             session['adm']   = bool(row['is_admin'])
             return redirect('/dashboard')
         error = 'Usuário ou senha incorretos.'
-    return R('login', error=error)
+    return R('login', error=error, success=success)
 
 @app.route('/logout')
 def logout():
@@ -378,14 +646,80 @@ def download(filename):
     if not (fn.endswith('.pdf') or fn.endswith('.zip')): abort(400)
     return send_from_directory(EBOOKS_DIR, fn, as_attachment=True)
 
+# ── Forgot / Reset password ───────────────────────────────────────────────────
+@app.route('/forgot', methods=['GET', 'POST'])
+def forgot():
+    mail_active = bool(MAIL_USER and MAIL_PASS)
+    if not mail_active:
+        return R('forgot', no_email=True, sent=False, error=None)
+    sent = False
+    error = None
+    if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        db = get_db()
+        row = db.execute('SELECT * FROM users WHERE email=?', (email,)).fetchone()
+        if row:
+            token = secrets.token_urlsafe(32)
+            expires = (datetime.utcnow() + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M:%S')
+            db.execute('INSERT INTO reset_tokens(user_id,token,expires_at) VALUES(?,?,?)',
+                       (row['id'], token, expires))
+            db.commit()
+            reset_url = request.host_url.rstrip('/') + f'/reset/{token}'
+            _send_email(email, '🔑 Redefinir senha · Clube do Saber', _reset_html(reset_url))
+        db.close()
+        sent = True  # always show success (security: don't reveal if email exists)
+    return R('forgot', no_email=False, sent=sent, error=error)
+
+@app.route('/reset/<token>', methods=['GET', 'POST'])
+def reset(token):
+    db = get_db()
+    row = db.execute(
+        'SELECT * FROM reset_tokens WHERE token=? AND used=0', (token,)
+    ).fetchone()
+    if not row:
+        db.close()
+        return R('reset', invalid=True, done=False, error=None)
+    # Check expiry
+    expires = datetime.strptime(row['expires_at'], '%Y-%m-%d %H:%M:%S')
+    if datetime.utcnow() > expires:
+        db.close()
+        return R('reset', invalid=True, done=False, error=None)
+    error = None
+    done = False
+    if request.method == 'POST':
+        p1 = request.form.get('password', '')
+        p2 = request.form.get('password2', '')
+        if not p1:
+            error = 'A senha não pode ser vazia.'
+        elif p1 != p2:
+            error = 'As senhas não coincidem.'
+        else:
+            db.execute('UPDATE users SET password_hash=? WHERE id=?',
+                       (generate_password_hash(p1), row['user_id']))
+            db.execute('UPDATE reset_tokens SET used=1 WHERE id=?', (row['id'],))
+            db.commit()
+            done = True
+    db.close()
+    return R('reset', invalid=False, done=done, error=error)
+
+# ── Admin routes ──────────────────────────────────────────────────────────────
+def _admin_ctx():
+    return dict(
+        mail_ok=bool(MAIL_USER and MAIL_PASS),
+        msg=request.args.get('msg', ''),
+        cur_id=session['uid'],
+        created=request.args.get('created', '0'),
+        skipped=request.args.get('skipped', '0'),
+        emailed=request.args.get('emailed', '0'),
+    )
+
 @app.route('/admin')
 @admin_required
 def admin():
     db = get_db()
     users = db.execute('SELECT * FROM users ORDER BY is_admin DESC, created_at DESC').fetchall()
     db.close()
-    return R('admin', users=users, uname=session['uname'],
-             msg=request.args.get('msg', ''), cur_id=session['uid'])
+    return R('admin', users=users, uname=session['uname'], **_admin_ctx())
 
 @app.route('/admin/add', methods=['POST'])
 @admin_required
@@ -398,10 +732,19 @@ def add_user():
     db = get_db()
     try:
         db.execute('INSERT INTO users(username,email,password_hash,is_admin) VALUES(?,?,?,?)',
-                   (u, e, generate_password_hash(p), adm)); db.commit(); msg='added'
-    except sqlite3.IntegrityError: msg='exists'
-    db.close()
-    return redirect(f'/admin?msg={msg}')
+                   (u, e, generate_password_hash(p), adm))
+        db.commit()
+        emailed = 0
+        if e and MAIL_USER and MAIL_PASS:
+            login_url = request.host_url.rstrip('/') + '/login'
+            html = _welcome_html(u, p, login_url)
+            if _send_email(e, '🎓 Seu acesso ao Clube do Saber foi criado!', html):
+                emailed = 1
+        return redirect(f'/admin?msg=added&emailed={emailed}')
+    except sqlite3.IntegrityError:
+        return redirect('/admin?msg=exists')
+    finally:
+        db.close()
 
 @app.route('/admin/delete/<int:uid>', methods=['POST'])
 @admin_required
@@ -420,6 +763,51 @@ def chg_pwd(uid):
     db.execute('UPDATE users SET password_hash=? WHERE id=?', (generate_password_hash(p), uid))
     db.commit(); db.close()
     return redirect('/admin?msg=pwd_ok')
+
+@app.route('/admin/import', methods=['POST'])
+@admin_required
+def import_users():
+    if not HAS_OPENPYXL:
+        return redirect('/admin?msg=no_xlsx')
+    f = request.files.get('file')
+    if not f:
+        return redirect('/admin?msg=import_err')
+    send_mail = bool(request.form.get('send_email')) and bool(MAIL_USER and MAIL_PASS)
+    try:
+        wb = openpyxl.load_workbook(io.BytesIO(f.read()))
+        ws = wb.active
+        rows = list(ws.iter_rows(values_only=True))
+        if not rows:
+            return redirect('/admin?msg=import_err')
+        # Detect header row
+        first = [str(c).lower().strip() if c else '' for c in rows[0]]
+        has_header = any(h in first for h in ('usuario', 'username', 'senha', 'password', 'email'))
+        data_rows = rows[1:] if has_header else rows
+        created = skipped = emailed = 0
+        db = get_db()
+        login_url = request.host_url.rstrip('/') + '/login'
+        for row in data_rows:
+            if not row or len(row) < 2: continue
+            username = str(row[0]).strip() if row[0] else ''
+            password = str(row[1]).strip() if row[1] else ''
+            email    = str(row[2]).strip() if len(row) > 2 and row[2] else ''
+            if not username or not password: continue
+            try:
+                db.execute('INSERT INTO users(username,email,password_hash,is_admin) VALUES(?,?,?,0)',
+                           (username, email, generate_password_hash(password)))
+                db.commit()
+                created += 1
+                if send_mail and email:
+                    html = _welcome_html(username, password, login_url)
+                    if _send_email(email, '🎓 Seu acesso ao Clube do Saber foi criado!', html):
+                        emailed += 1
+            except sqlite3.IntegrityError:
+                skipped += 1
+        db.close()
+        return redirect(f'/admin?msg=imported&created={created}&skipped={skipped}&emailed={emailed}')
+    except Exception as ex:
+        print(f'[import] {ex}')
+        return redirect('/admin?msg=import_err')
 
 # ── Start ─────────────────────────────────────────────────────────────────────
 init_db()
