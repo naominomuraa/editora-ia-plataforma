@@ -21,9 +21,24 @@ EBOOKS_DIR = BASE_DIR
 with open(os.path.join(BASE_DIR, 'ebooks_metadata.json'), 'r', encoding='utf-8') as _f:
     EBOOKS = json.load(_f)
 
+# Ordem preferida das categorias (brasileiros primeiro)
+_CAT_ORDER = [
+    'Clássicos Brasileiros', 'Classicos Brasileiros',
+    'Livros em Inglês',
+    'IA e Tecnologia', 'Negócios', 'Finanças', 'Importação',
+    'Liderança', 'Desenvolvimento Pessoal', 'Varejo', 'Saúde e Gestão',
+]
+def _cat_rank(cat):
+    cl = cat.lower()
+    for i, o in enumerate(_CAT_ORDER):
+        if o.lower() in cl or cl in o.lower():
+            return i
+    return 99
+
 CATEGORIES = {}
 for _eb in EBOOKS:
     CATEGORIES.setdefault(_eb['categoria'], []).append(_eb)
+CATEGORIES = dict(sorted(CATEGORIES.items(), key=lambda kv: _cat_rank(kv[0])))
 
 CAT_ICONS = {
     'IA e Tecnologia':        'bi-cpu-fill',
@@ -251,10 +266,17 @@ def dashboard():
 @app.route('/download/<path:filename>')
 @login_required
 def download(filename):
+    import re
     safe = os.path.basename(filename)
-    path = os.path.join(EBOOKS_DIR, safe)
-    if not os.path.exists(path): abort(404)
-    return send_from_directory(EBOOKS_DIR, safe, as_attachment=True)
+    # Procura na pasta principal e em livros_para_upload/
+    for folder in [EBOOKS_DIR, os.path.join(EBOOKS_DIR, 'livros_para_upload')]:
+        path = os.path.join(folder, safe)
+        if os.path.exists(path):
+            # Remove prefixo numérico do nome do download (ex: 051_ ou 01_)
+            clean_name = re.sub(r'^\d+_', '', safe)
+            return send_from_directory(folder, safe, as_attachment=True,
+                                       download_name=clean_name)
+    abort(404)
 
 @app.route('/admin')
 @login_required
