@@ -1059,5 +1059,327 @@
     "subtitulo": "José de Alencar e a formação da identidade brasileira",
     "categoria": "Clássicos Brasileiros",
     "filename": "73_O_Guarani.pdf"
+  },
+  {
+    "id": 74,
+    "titulo": "How to Live on 24 Hours a Day",
+    "subtitulo": "Arnold Bennett's timeless guide to mastering your time",
+    "categoria": "Livros em Inglês",
+    "filename": "074_How_to_Live_on_24_Hours_a_Day.pdf"
+  },
+  {
+    "id": 75,
+    "titulo": "The Master Key System",
+    "subtitulo": "Charles Haanel's complete guide to mental achievement",
+    "categoria": "Livros em Inglês",
+    "filename": "075_The_Master_Key_System.pdf"
+  },
+  {
+    "id": 76,
+    "titulo": "The Kybalion",
+    "subtitulo": "Hermetic philosophy and the seven universal laws",
+    "categoria": "Livros em Inglês",
+    "filename": "076_The_Kybalion.pdf"
+  },
+  {
+    "id": 77,
+    "titulo": "Walden",
+    "subtitulo": "Thoreau on intentional living, simplicity and financial freedom",
+    "categoria": "Livros em Inglês",
+    "filename": "077_Walden.pdf"
+  },
+  {
+    "id": 78,
+    "titulo": "Common Sense",
+    "subtitulo": "Thomas Paine on leadership, independence and governance",
+    "categoria": "Livros em Inglês",
+    "filename": "078_Common_Sense.pdf"
+  },
+  {
+    "id": 79,
+    "titulo": "The Republic",
+    "subtitulo": "Plato's vision of justice, leadership and the ideal society",
+    "categoria": "Livros em Inglês",
+    "filename": "079_The_Republic.pdf"
+  },
+  {
+    "id": 80,
+    "titulo": "The Enchiridion",
+    "subtitulo": "Epictetus on stoic resilience, self-mastery and inner freedom",
+    "categoria": "Livros em Inglês",
+    "filename": "080_The_Enchiridion.pdf"
+  },
+  {
+    "id": 81,
+    "titulo": "Beyond Good and Evil",
+    "subtitulo": "Nietzsche on leadership, values and moral philosophy",
+    "categoria": "Livros em Inglês",
+    "filename": "081_Beyond_Good_and_Evil.pdf"
+  },
+  {
+    "id": 82,
+    "titulo": "Thus Spake Zarathustra",
+    "subtitulo": "Nietzsche's masterwork on self-overcoming and leadership",
+    "categoria": "Livros em Inglês",
+    "filename": "082_Thus_Spake_Zarathustra.pdf"
+  },
+  {
+    "id": 83,
+    "titulo": "On Liberty",
+    "subtitulo": "John Stuart Mill on freedom, individuality and society",
+    "categoria": "Livros em Inglês",
+    "filename": "083_On_Liberty.pdf"
+  },
+  {
+    "id": 84,
+    "titulo": "The Crowd",
+    "subtitulo": "Gustave Le Bon on group psychology and social influence",
+    "categoria": "Livros em Inglês",
+    "filename": "084_The_Crowd.pdf"
+  },
+  {
+    "id": 85,
+    "titulo": "The Theory of the Leisure Class",
+    "subtitulo": "Veblen on wealth, status, consumption and social class",
+    "categoria": "Livros em Inglês",
+    "filename": "085_The_Theory_of_the_Leisure_Class.pdf"
+  },
+  {
+    "id": 86,
+    "titulo": "The Art of Money Getting",
+    "subtitulo": "P.T. Barnum's golden rules for making money",
+    "categoria": "Livros em Inglês",
+    "filename": "086_The_Art_of_Money_Getting.pdf"
+  },
+  {
+    "id": 87,
+    "titulo": "Extraordinary Popular Delusions",
+    "subtitulo": "Charles Mackay on financial bubbles and mass hysteria",
+    "categoria": "Livros em Inglês",
+    "filename": "087_Extraordinary_Popular_Delusions.pdf"
+  },
+  {
+    "id": 88,
+    "titulo": "Talks to Teachers",
+    "subtitulo": "William James on motivation, habits and human psychology",
+    "categoria": "Livros em Inglês",
+    "filename": "088_Talks_to_Teachers.pdf"
+  },
+  {
+    "id": 89,
+    "titulo": "Utopia",
+    "subtitulo": "Thomas More's vision of an ideal society and governance",
+    "categoria": "Livros em Inglês",
+    "filename": "089_Utopia.pdf"
+  },
+  {
+    "id": 90,
+    "titulo": "The Essays of Francis Bacon",
+    "subtitulo": "Bacon on business, ambition, truth and human nature",
+    "categoria": "Livros em Inglês",
+    "filename": "090_The_Essays_of_Francis_Bacon.pdf"
+  },
+  {
+    "id": 91,
+    "titulo": "The Communist Manifesto",
+    "subtitulo": "Marx and Engels on economics, society and social change",
+    "categoria": "Livros em Inglês",
+    "filename": "091_The_Communist_Manifesto.pdf"
+  },
+  {
+    "id": 92,
+    "titulo": "On the Origin of Species",
+    "subtitulo": "Darwin's revolutionary theory of evolution and adaptation",
+    "categoria": "Livros em Inglês",
+    "filename": "092_On_the_Origin_of_Species.pdf"
+  },
+  {
+    "id": 93,
+    "titulo": "The Social Contract",
+    "subtitulo": "Rousseau on governance, freedom and political legitimacy",
+    "categoria": "Livros em Inglês",
+    "filename": "093_The_Social_Contract.pdf"
+  },
+  {
+    "id": 94,
+    "titulo": "Discourse on Method",
+    "subtitulo": "Descartes on rational thinking and the scientific method",
+    "categoria": "Livros em Inglês",
+    "filename": "094_Discourse_on_Method.pdf"
+  },
+  {
+    "id": 95,
+    "titulo": "In Tune with the Infinite",
+    "subtitulo": "Ralph Waldo Trine on harmony, abundance and mental power",
+    "categoria": "Livros em Inglês",
+    "filename": "095_In_Tune_with_the_Infinite.pdf"
+  },
+  {
+    "id": 96,
+    "titulo": "Thought Vibration",
+    "subtitulo": "W.W. Atkinson and the law of attraction in thought",
+    "categoria": "Livros em Inglês",
+    "filename": "096_Thought_Vibration.pdf"
+  },
+  {
+    "id": 97,
+    "titulo": "The Power of Concentration",
+    "subtitulo": "Theron Dumont's guide to focus and mental discipline",
+    "categoria": "Livros em Inglês",
+    "filename": "097_The_Power_of_Concentration.pdf"
+  },
+  {
+    "id": 98,
+    "titulo": "The Edinburgh Lectures on Mental Science",
+    "subtitulo": "Thomas Troward on mind power and creative thought",
+    "categoria": "Livros em Inglês",
+    "filename": "098_The_Edinburgh_Lectures_on_Mental_Science.pdf"
+  },
+  {
+    "id": 99,
+    "titulo": "Esau e Jaco",
+    "subtitulo": "Machado de Assis — dualidade, politica e identidade",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "099_Esau_e_Jaco.pdf"
+  },
+  {
+    "id": 100,
+    "titulo": "Memorial de Aires",
+    "subtitulo": "O ultimo romance de Machado de Assis — amor e memoria",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "100_Memorial_de_Aires.pdf"
+  },
+  {
+    "id": 101,
+    "titulo": "Iaia Garcia",
+    "subtitulo": "Machado de Assis — sociedade, amor e sacrificio no seculo XIX",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "101_Iaia_Garcia.pdf"
+  },
+  {
+    "id": 102,
+    "titulo": "Ressurreicao",
+    "subtitulo": "O primeiro romance de Machado de Assis — ciume e redencao",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "102_Ressurreicao.pdf"
+  },
+  {
+    "id": 103,
+    "titulo": "A Mao e a Luva",
+    "subtitulo": "Machado de Assis — ambicao social e os jogos do casamento",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "103_A_Mao_e_a_Luva.pdf"
+  },
+  {
+    "id": 105,
+    "titulo": "Senhora",
+    "subtitulo": "Jose de Alencar — independencia feminina e critica social",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "105_Senhora.pdf"
+  },
+  {
+    "id": 106,
+    "titulo": "Ubirajara",
+    "subtitulo": "Jose de Alencar e a epica do guerreiro indigena brasileiro",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "106_Ubirajara.pdf"
+  },
+  {
+    "id": 107,
+    "titulo": "Til",
+    "subtitulo": "Jose de Alencar — paixao, misterio e vida rural no Brasil",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "107_Til.pdf"
+  },
+  {
+    "id": 108,
+    "titulo": "O Mulato",
+    "subtitulo": "Aluisio Azevedo — naturalismo e critica ao racismo no Brasil",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "108_O_Mulato.pdf"
+  },
+  {
+    "id": 109,
+    "titulo": "Casa de Pensao",
+    "subtitulo": "Aluisio Azevedo — vida boemia e drama social no Rio de Janeiro",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "109_Casa_de_Pensao.pdf"
+  },
+  {
+    "id": 110,
+    "titulo": "O Homem",
+    "subtitulo": "Aluisio Azevedo — paixao, obsessao e naturalismo radical",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "110_O_Homem.pdf"
+  },
+  {
+    "id": 111,
+    "titulo": "Triste Fim de Policarpo Quaresma",
+    "subtitulo": "Lima Barreto — patriotismo, utopia e tragedia brasileira",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "111_Triste_Fim_de_Policarpo_Quaresma.pdf"
+  },
+  {
+    "id": 112,
+    "titulo": "Clara dos Anjos",
+    "subtitulo": "Lima Barreto — racismo, preconceito e a sociedade carioca",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "112_Clara_dos_Anjos.pdf"
+  },
+  {
+    "id": 113,
+    "titulo": "Recordacoes do Escrivao Isaias Caminha",
+    "subtitulo": "Lima Barreto — critica ao jornalismo e a republica nascente",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "113_Recordacoes_do_Escrivao_Isaias_Caminha.pdf"
+  },
+  {
+    "id": 114,
+    "titulo": "Memorias de um Sargento de Milicias",
+    "subtitulo": "Manuel Antonio de Almeida — o picaro classico da literatura brasileira",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "114_Memorias_de_um_Sargento_de_Milicias.pdf"
+  },
+  {
+    "id": 115,
+    "titulo": "A Moreninha",
+    "subtitulo": "Joaquim Manuel de Macedo — o primeiro romance brasileiro",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "115_A_Moreninha.pdf"
+  },
+  {
+    "id": 116,
+    "titulo": "O Ateneu",
+    "subtitulo": "Raul Pompeia — critica ao sistema educacional e a sociedade",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "116_O_Ateneu.pdf"
+  },
+  {
+    "id": 117,
+    "titulo": "Escrava Isaura",
+    "subtitulo": "Bernardo Guimaraes — liberdade, amor e luta abolicionista",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "117_Escrava_Isaura.pdf"
+  },
+  {
+    "id": 119,
+    "titulo": "Os Sertoes",
+    "subtitulo": "Euclides da Cunha — Canudos, sertao e a formacao do Brasil",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "119_Os_Sertoes.pdf"
+  },
+  {
+    "id": 120,
+    "titulo": "Noite na Taverna",
+    "subtitulo": "Alvares de Azevedo — romantismo sombrio, paixao e morte",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "120_Noite_na_Taverna.pdf"
+  },
+  {
+    "id": 123,
+    "titulo": "O Seminarista",
+    "subtitulo": "Bernardo Guimaraes — fe, amor proibido e destino no sertao",
+    "categoria": "Clássicos Brasileiros",
+    "filename": "123_O_Seminarista.pdf"
   }
 ]
