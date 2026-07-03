@@ -26,6 +26,7 @@ _CAT_ORDER = [
     'Livros em Inglês',
     'IA e Tecnologia', 'Negócios', 'Finanças', 'Importação',
     'Liderança', 'Desenvolvimento Pessoal', 'Varejo', 'Saúde e Gestão',
+    'Automóveis',
 ]
 def _cat_rank(cat):
     cl = cat.lower()
@@ -50,6 +51,7 @@ CAT_ICONS = {
     'Saúde e Gestão': 'bi-heart-pulse-fill',
     'Livros em Inglês': 'bi-globe2',
     'Clássicos Brasileiros': 'bi-book-fill',
+    'Automóveis': 'bi-car-front-fill',
 }
 CAT_COLORS = {
     'IA e Tecnologia': '#00BCD4',
@@ -62,6 +64,7 @@ CAT_COLORS = {
     'Saúde e Gestão': '#16A085',
     'Livros em Inglês': '#2196F3',
     'Clássicos Brasileiros': '#4CAF50',
+    'Automóveis': '#E74C3C',
 }
 
 def _cat_icon(cat):

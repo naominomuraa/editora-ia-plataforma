@@ -1381,5 +1381,69 @@
     "subtitulo": "Bernardo Guimaraes — fe, amor proibido e destino no sertao",
     "categoria": "Clássicos Brasileiros",
     "filename": "123_O_Seminarista.pdf"
+  },
+  {
+    "id": 124,
+    "titulo": "Scooters, Motos e Veículos Econômicos",
+    "subtitulo": "Guia completo para economizar combustível com veículos de dois rodas e híbridos",
+    "categoria": "Automóveis",
+    "subcategoria": "Veículos Econômicos",
+    "filename": "124_Scooters_Motos_e_Veiculos_Economicos.pdf"
+  },
+  {
+    "id": 125,
+    "titulo": "Motocicletas Rebeldes",
+    "subtitulo": "O guia definitivo para apaixonados por motos: cultura, mecânica e estilo de vida",
+    "categoria": "Automóveis",
+    "subcategoria": "Motocicletas",
+    "filename": "125_Motocicletas_Rebeldes.pdf"
+  },
+  {
+    "id": 126,
+    "titulo": "Hypermiling: Economia Extrema de Combustível",
+    "subtitulo": "Técnicas avançadas para maximizar a eficiência do seu veículo e gastar menos",
+    "categoria": "Automóveis",
+    "subcategoria": "Eficiência e Economia",
+    "filename": "126_Hypermiling_Economia_de_Combustivel.pdf"
+  },
+  {
+    "id": 127,
+    "titulo": "Comprar vs. Leasing de Carro",
+    "subtitulo": "Como decidir entre comprar ou fazer leasing do seu próximo veículo",
+    "categoria": "Automóveis",
+    "subcategoria": "Finanças Automotivas",
+    "filename": "127_Comprar_vs_Leasing_de_Carro.pdf"
+  },
+  {
+    "id": 128,
+    "titulo": "Manual Negro do Cuidado do Carro",
+    "subtitulo": "Tudo que você precisa saber para manter seu veículo em perfeito estado",
+    "categoria": "Automóveis",
+    "subcategoria": "Manutenção",
+    "filename": "128_Manual_Negro_do_Cuidado_do_Carro.pdf"
+  },
+  {
+    "id": 129,
+    "titulo": "Carros Híbridos",
+    "subtitulo": "O guia completo sobre tecnologia híbrida, vantagens e como escolher o seu",
+    "categoria": "Automóveis",
+    "subcategoria": "Carros Híbridos e Elétricos",
+    "filename": "129_Carros_Hibridos.pdf"
+  },
+  {
+    "id": 130,
+    "titulo": "Campeã de RV",
+    "subtitulo": "Guia completo para aproveitar ao máximo sua vida em motorhome e trailer",
+    "categoria": "Automóveis",
+    "subcategoria": "Motorhome e RV",
+    "filename": "130_Campea_de_RV.pdf"
+  },
+  {
+    "id": 131,
+    "titulo": "Manual de Cuidados com o Carro",
+    "subtitulo": "Dicas práticas de manutenção preventiva para prolongar a vida do seu veículo",
+    "categoria": "Automóveis",
+    "subcategoria": "Manutenção",
+    "filename": "131_Manual_de_Cuidados_com_o_Carro.pdf"
   }
 ]
