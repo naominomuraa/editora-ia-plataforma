@@ -27,6 +27,7 @@ _CAT_ORDER = [
     'IA e Tecnologia', 'Negócios', 'Finanças', 'Importação',
     'Liderança', 'Desenvolvimento Pessoal', 'Varejo', 'Saúde e Gestão',
     'Automóveis',
+    'Culinária', 'Educação Infantil', 'Estilo de vida', 'Idiomas', 'Saúde',
 ]
 def _cat_rank(cat):
     cl = cat.lower()
@@ -52,6 +53,11 @@ CAT_ICONS = {
     'Livros em Inglês': 'bi-globe2',
     'Clássicos Brasileiros': 'bi-book-fill',
     'Automóveis': 'bi-car-front-fill',
+    'Culinária': 'bi-fire',
+    'Educação Infantil': 'bi-pencil-fill',
+    'Estilo de vida': 'bi-stars',
+    'Idiomas': 'bi-translate',
+    'Saúde': 'bi-heart-pulse-fill',
 }
 CAT_COLORS = {
     'IA e Tecnologia': '#00BCD4',
@@ -65,6 +71,11 @@ CAT_COLORS = {
     'Livros em Inglês': '#2196F3',
     'Clássicos Brasileiros': '#4CAF50',
     'Automóveis': '#E74C3C',
+    'Culinária': '#FF9800',
+    'Educação Infantil': '#9C27B0',
+    'Estilo de vida': '#FF6B9D',
+    'Idiomas': '#009688',
+    'Saúde': '#1ABC9C',
 }
 
 def _cat_icon(cat):
@@ -401,10 +412,13 @@ def download(filename):
     safe = os.path.basename(filename)
     # Verifica acesso à categoria do livro
     allowed = _get_user_categories()
+    book_meta = next((b for b in EBOOKS if b['filename'] == safe), None)
     if allowed is not None:
-        book_meta = next((b for b in EBOOKS if b['filename'] == safe), None)
         if book_meta and book_meta['categoria'] not in allowed:
             abort(403)
+    # Se o ebook tem driveId, redirecionar para Google Drive
+    if book_meta and book_meta.get('driveId'):
+        return redirect('https://drive.google.com/uc?export=download&id={}'.format(book_meta['driveId']))
     for folder in [EBOOKS_DIR, os.path.join(EBOOKS_DIR, 'livros_para_upload')]:
         path = os.path.join(folder, safe)
         if os.path.exists(path):
